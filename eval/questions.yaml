@@ -1,0 +1,334 @@
+# Labelled evaluation set for the Text-to-SQL agent.
+# Each item: id, question (plain English), gold_sql (reference DuckDB query),
+# difficulty (easy | medium | hard). Gold SQL is order-insensitively compared
+# against the agent's result, so equivalent phrasings still count as correct.
+
+# ---------------------------------------------------------------- easy
+- id: e01
+  question: How many vessels are in the database?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels
+  difficulty: easy
+- id: e02
+  question: How many ports are there?
+  gold_sql: SELECT COUNT(*) AS n FROM ports
+  difficulty: easy
+- id: e03
+  question: How many port calls have been recorded?
+  gold_sql: SELECT COUNT(*) AS n FROM port_calls
+  difficulty: easy
+- id: e04
+  question: What distinct vessel types exist?
+  gold_sql: SELECT DISTINCT vessel_type FROM vessels
+  difficulty: easy
+- id: e05
+  question: List the distinct flags vessels are registered under.
+  gold_sql: SELECT DISTINCT flag FROM vessels
+  difficulty: easy
+- id: e06
+  question: How many distinct countries have ports?
+  gold_sql: SELECT COUNT(DISTINCT country) AS n FROM ports
+  difficulty: easy
+- id: e07
+  question: How many vessels were built after 2015?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE built_year > 2015
+  difficulty: easy
+- id: e08
+  question: How many vessels are longer than 300 metres?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE length_m > 300
+  difficulty: easy
+- id: e09
+  question: What is the maximum gross tonnage of any vessel?
+  gold_sql: SELECT MAX(gross_tonnage) AS max_gt FROM vessels
+  difficulty: easy
+- id: e10
+  question: What is the earliest vessel build year?
+  gold_sql: SELECT MIN(built_year) AS earliest FROM vessels
+  difficulty: easy
+- id: e11
+  question: What is the average vessel length in metres?
+  gold_sql: SELECT AVG(length_m) AS avg_len FROM vessels
+  difficulty: easy
+- id: e12
+  question: How many LNG carriers are there?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE vessel_type = 'LNG Carrier'
+  difficulty: easy
+- id: e13
+  question: Which ports are in the United Kingdom?
+  gold_sql: SELECT name FROM ports WHERE country = 'United Kingdom'
+  difficulty: easy
+- id: e14
+  question: How many distinct energy products are tracked?
+  gold_sql: SELECT COUNT(DISTINCT product) AS n FROM energy_prices
+  difficulty: easy
+- id: e15
+  question: How many distinct pricing regions are there?
+  gold_sql: SELECT COUNT(DISTINCT region) AS n FROM energy_prices
+  difficulty: easy
+- id: e16
+  question: What is the highest energy price recorded?
+  gold_sql: SELECT MAX(price_usd) AS max_price FROM energy_prices
+  difficulty: easy
+- id: e17
+  question: What is the lowest energy price recorded?
+  gold_sql: SELECT MIN(price_usd) AS min_price FROM energy_prices
+  difficulty: easy
+- id: e18
+  question: What is the overall average energy price?
+  gold_sql: SELECT AVG(price_usd) AS avg_price FROM energy_prices
+  difficulty: easy
+- id: e19
+  question: What is the earliest price date in the data?
+  gold_sql: SELECT MIN(price_date) AS earliest FROM energy_prices
+  difficulty: easy
+- id: e20
+  question: What is the latest price date in the data?
+  gold_sql: SELECT MAX(price_date) AS latest FROM energy_prices
+  difficulty: easy
+- id: e21
+  question: How many vessels are flagged in Panama?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE flag = 'Panama'
+  difficulty: easy
+- id: e22
+  question: What is the total cargo tonnage across all port calls?
+  gold_sql: SELECT SUM(cargo_tonnes) AS total FROM port_calls
+  difficulty: easy
+- id: e23
+  question: What is the average cargo tonnage per port call?
+  gold_sql: SELECT AVG(cargo_tonnes) AS avg_cargo FROM port_calls
+  difficulty: easy
+- id: e24
+  question: What is the largest single cargo tonnage in any port call?
+  gold_sql: SELECT MAX(cargo_tonnes) AS max_cargo FROM port_calls
+  difficulty: easy
+- id: e25
+  question: How many port calls carried more than 200000 tonnes of cargo?
+  gold_sql: SELECT COUNT(*) AS n FROM port_calls WHERE cargo_tonnes > 200000
+  difficulty: easy
+- id: e26
+  question: How many vessels were built before 2005?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE built_year < 2005
+  difficulty: easy
+- id: e27
+  question: What is the average gross tonnage of vessels?
+  gold_sql: SELECT AVG(gross_tonnage) AS avg_gt FROM vessels
+  difficulty: easy
+- id: e28
+  question: How many distinct vessel types are there?
+  gold_sql: SELECT COUNT(DISTINCT vessel_type) AS n FROM vessels
+  difficulty: easy
+- id: e29
+  question: List all countries that have ports.
+  gold_sql: SELECT DISTINCT country FROM ports
+  difficulty: easy
+- id: e30
+  question: How many container ships are in the fleet?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE vessel_type = 'Container Ship'
+  difficulty: easy
+
+# ---------------------------------------------------------------- medium
+- id: m01
+  question: How many vessels are there of each vessel type?
+  gold_sql: SELECT vessel_type, COUNT(*) AS n FROM vessels GROUP BY vessel_type
+  difficulty: medium
+- id: m02
+  question: How many port calls did each port receive? Show the port name.
+  gold_sql: SELECT p.name, COUNT(*) AS calls FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name
+  difficulty: medium
+- id: m03
+  question: What is the average cargo tonnage by vessel type?
+  gold_sql: SELECT v.vessel_type, AVG(c.cargo_tonnes) AS avg_cargo FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.vessel_type
+  difficulty: medium
+- id: m04
+  question: What is the total cargo tonnage delivered to each port? Show the port name.
+  gold_sql: SELECT p.name, SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name
+  difficulty: medium
+- id: m05
+  question: What is the average energy price for each product?
+  gold_sql: SELECT product, AVG(price_usd) AS avg_price FROM energy_prices GROUP BY product
+  difficulty: medium
+- id: m06
+  question: What is the average energy price for each region?
+  gold_sql: SELECT region, AVG(price_usd) AS avg_price FROM energy_prices GROUP BY region
+  difficulty: medium
+- id: m07
+  question: How many port calls occurred in each country? Show the country.
+  gold_sql: SELECT p.country, COUNT(*) AS calls FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.country
+  difficulty: medium
+- id: m08
+  question: How many vessels are registered under each flag?
+  gold_sql: SELECT flag, COUNT(*) AS n FROM vessels GROUP BY flag
+  difficulty: medium
+- id: m09
+  question: What is the average vessel length by vessel type?
+  gold_sql: SELECT vessel_type, AVG(length_m) AS avg_len FROM vessels GROUP BY vessel_type
+  difficulty: medium
+- id: m10
+  question: Which port received the most port calls? Give the port name and the count.
+  gold_sql: SELECT p.name, COUNT(*) AS calls FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name ORDER BY calls DESC LIMIT 1
+  difficulty: medium
+- id: m11
+  question: What are the top 3 ports by total cargo tonnage? Show name and total.
+  gold_sql: SELECT p.name, SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name ORDER BY total DESC LIMIT 3
+  difficulty: medium
+- id: m11b
+  question: What is the average price of Crude Oil in each region?
+  gold_sql: SELECT region, AVG(price_usd) AS avg_price FROM energy_prices WHERE product = 'Crude Oil' GROUP BY region
+  difficulty: medium
+- id: m12
+  question: How many vessels were built in each year?
+  gold_sql: SELECT built_year, COUNT(*) AS n FROM vessels GROUP BY built_year
+  difficulty: medium
+- id: m13
+  question: What is the total cargo tonnage carried by each vessel type?
+  gold_sql: SELECT v.vessel_type, SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.vessel_type
+  difficulty: medium
+- id: m14
+  question: What is the average gross tonnage by flag?
+  gold_sql: SELECT flag, AVG(gross_tonnage) AS avg_gt FROM vessels GROUP BY flag
+  difficulty: medium
+- id: m15
+  question: Which ports received more than 100 port calls? Show the name and count.
+  gold_sql: SELECT p.name, COUNT(*) AS calls FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name HAVING COUNT(*) > 100
+  difficulty: medium
+- id: m16
+  question: Which vessel types have an average length greater than 250 metres?
+  gold_sql: SELECT vessel_type, AVG(length_m) AS avg_len FROM vessels GROUP BY vessel_type HAVING AVG(length_m) > 250
+  difficulty: medium
+- id: m17
+  question: How many distinct vessels called at Singapore?
+  gold_sql: SELECT COUNT(DISTINCT c.mmsi) AS n FROM port_calls c JOIN ports p ON p.port_id = c.port_id WHERE p.name = 'Singapore'
+  difficulty: medium
+- id: m18
+  question: What is the total cargo tonnage delivered to ports in the United Kingdom?
+  gold_sql: SELECT SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN ports p ON p.port_id = c.port_id WHERE p.country = 'United Kingdom'
+  difficulty: medium
+- id: m19
+  question: How many price records are there for each product?
+  gold_sql: SELECT product, COUNT(*) AS n FROM energy_prices GROUP BY product
+  difficulty: medium
+- id: m20
+  question: What is the minimum price for each product?
+  gold_sql: SELECT product, MIN(price_usd) AS min_price FROM energy_prices GROUP BY product
+  difficulty: medium
+- id: m21
+  question: What is the maximum price for each region?
+  gold_sql: SELECT region, MAX(price_usd) AS max_price FROM energy_prices GROUP BY region
+  difficulty: medium
+- id: m22
+  question: How many port calls occurred in each calendar month? Use the month number.
+  gold_sql: SELECT EXTRACT(month FROM arrival_ts) AS month, COUNT(*) AS calls FROM port_calls GROUP BY month
+  difficulty: medium
+- id: m23
+  question: How many calls did Rotterdam receive?
+  gold_sql: SELECT COUNT(*) AS calls FROM port_calls c JOIN ports p ON p.port_id = c.port_id WHERE p.name = 'Rotterdam'
+  difficulty: medium
+- id: m24
+  question: What is the average cargo tonnage delivered to each country?
+  gold_sql: SELECT p.country, AVG(c.cargo_tonnes) AS avg_cargo FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.country
+  difficulty: medium
+- id: m25
+  question: Which flags have more than 8 vessels? Show flag and count.
+  gold_sql: SELECT flag, COUNT(*) AS n FROM vessels GROUP BY flag HAVING COUNT(*) > 8
+  difficulty: medium
+- id: m26
+  question: What is the average Natural Gas price across all regions?
+  gold_sql: SELECT AVG(price_usd) AS avg_price FROM energy_prices WHERE product = 'Natural Gas'
+  difficulty: medium
+- id: m27
+  question: List the ports ordered from southernmost to northernmost by latitude.
+  gold_sql: SELECT name, latitude FROM ports ORDER BY latitude ASC
+  difficulty: medium
+- id: m28
+  question: How many distinct vessels have made at least one port call?
+  gold_sql: SELECT COUNT(DISTINCT mmsi) AS n FROM port_calls
+  difficulty: medium
+- id: m29
+  question: What is the average price of Diesel in the US Gulf Coast?
+  gold_sql: SELECT AVG(price_usd) AS avg_price FROM energy_prices WHERE product = 'Diesel' AND region = 'US Gulf Coast'
+  difficulty: medium
+- id: m30
+  question: How many port calls did each vessel type make?
+  gold_sql: SELECT v.vessel_type, COUNT(*) AS calls FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.vessel_type
+  difficulty: medium
+
+# ---------------------------------------------------------------- hard
+- id: h01
+  question: Which vessel made the most port calls? Give the vessel name and the number of calls.
+  gold_sql: SELECT v.name, COUNT(*) AS calls FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.name ORDER BY calls DESC LIMIT 1
+  difficulty: hard
+- id: h02
+  question: Which port has the highest average cargo tonnage per call? Show name and average.
+  gold_sql: SELECT p.name, AVG(c.cargo_tonnes) AS avg_cargo FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name ORDER BY avg_cargo DESC LIMIT 1
+  difficulty: hard
+- id: h03
+  question: Which energy product has the largest spread between its highest and lowest price?
+  gold_sql: SELECT product, MAX(price_usd) - MIN(price_usd) AS spread FROM energy_prices GROUP BY product ORDER BY spread DESC LIMIT 1
+  difficulty: hard
+- id: h04
+  question: Which calendar month had the highest total cargo tonnage? Use the month number.
+  gold_sql: SELECT EXTRACT(month FROM arrival_ts) AS month, SUM(cargo_tonnes) AS total FROM port_calls GROUP BY month ORDER BY total DESC LIMIT 1
+  difficulty: hard
+- id: h05
+  question: How many vessels have a gross tonnage above the overall average gross tonnage?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels WHERE gross_tonnage > (SELECT AVG(gross_tonnage) FROM vessels)
+  difficulty: hard
+- id: h06
+  question: Which vessel type accounts for the greatest total cargo tonnage?
+  gold_sql: SELECT v.vessel_type, SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.vessel_type ORDER BY total DESC LIMIT 1
+  difficulty: hard
+- id: h07
+  question: Which country received the most total cargo tonnage?
+  gold_sql: SELECT p.country, SUM(c.cargo_tonnes) AS total FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.country ORDER BY total DESC LIMIT 1
+  difficulty: hard
+- id: h08
+  question: Which flag has the most vessels registered to it?
+  gold_sql: SELECT flag, COUNT(*) AS n FROM vessels GROUP BY flag ORDER BY n DESC LIMIT 1
+  difficulty: hard
+- id: h09
+  question: What percentage of all port calls were made by container ships? Return a percentage.
+  gold_sql: SELECT 100.0 * SUM(CASE WHEN v.vessel_type = 'Container Ship' THEN 1 ELSE 0 END) / COUNT(*) AS pct FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi
+  difficulty: hard
+- id: h10
+  question: Which port was visited by the greatest number of distinct vessels? Show name and count.
+  gold_sql: SELECT p.name, COUNT(DISTINCT c.mmsi) AS vessels FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name ORDER BY vessels DESC LIMIT 1
+  difficulty: hard
+- id: h11
+  question: What is the standard deviation of price for each product?
+  gold_sql: SELECT product, STDDEV_SAMP(price_usd) AS sd FROM energy_prices GROUP BY product
+  difficulty: hard
+- id: h12
+  question: What is the average cargo tonnage for vessels built after 2010?
+  gold_sql: SELECT AVG(c.cargo_tonnes) AS avg_cargo FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi WHERE v.built_year > 2010
+  difficulty: hard
+- id: h13
+  question: Which region has the highest average Crude Oil price?
+  gold_sql: SELECT region, AVG(price_usd) AS avg_price FROM energy_prices WHERE product = 'Crude Oil' GROUP BY region ORDER BY avg_price DESC LIMIT 1
+  difficulty: hard
+- id: h14
+  question: Which vessel type has the highest average gross tonnage?
+  gold_sql: SELECT vessel_type, AVG(gross_tonnage) AS avg_gt FROM vessels GROUP BY vessel_type ORDER BY avg_gt DESC LIMIT 1
+  difficulty: hard
+- id: h15
+  question: What is the median cargo tonnage across all port calls?
+  gold_sql: SELECT MEDIAN(cargo_tonnes) AS median_cargo FROM port_calls
+  difficulty: hard
+- id: h16
+  question: How many weeks did the Crude Oil price in the US Gulf Coast exceed 85 dollars?
+  gold_sql: SELECT COUNT(*) AS n FROM energy_prices WHERE product = 'Crude Oil' AND region = 'US Gulf Coast' AND price_usd > 85
+  difficulty: hard
+- id: h17
+  question: What is the average duration in hours of a port call?
+  gold_sql: SELECT AVG(EXTRACT(epoch FROM (departure_ts - arrival_ts)) / 3600.0) AS avg_hours FROM port_calls
+  difficulty: hard
+- id: h18
+  question: Which port has the shortest average stay duration in hours? Show name and hours.
+  gold_sql: SELECT p.name, AVG(EXTRACT(epoch FROM (c.departure_ts - c.arrival_ts)) / 3600.0) AS avg_hours FROM port_calls c JOIN ports p ON p.port_id = c.port_id GROUP BY p.name ORDER BY avg_hours ASC LIMIT 1
+  difficulty: hard
+- id: h19
+  question: List the top 5 vessels by number of port calls, showing name and count.
+  gold_sql: SELECT v.name, COUNT(*) AS calls FROM port_calls c JOIN vessels v ON v.mmsi = c.mmsi GROUP BY v.name ORDER BY calls DESC LIMIT 5
+  difficulty: hard
+- id: h20
+  question: How many vessels have never made a port call?
+  gold_sql: SELECT COUNT(*) AS n FROM vessels v WHERE NOT EXISTS (SELECT 1 FROM port_calls c WHERE c.mmsi = v.mmsi)
+  difficulty: hard
